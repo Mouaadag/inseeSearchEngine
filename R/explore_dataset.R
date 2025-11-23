@@ -32,16 +32,16 @@
 #' @importFrom insee get_idbank_list
 #' @importFrom glue glue
 explore_dataset <- function(dataset_id, show_sample = TRUE) {
-  cat(glue::glue("\n Exploration du dataset : {dataset_id}\n"))
+  cat(glue::glue("\n Exploring dataset: {dataset_id}\n"))
   cat(rep("=", 60), "\n\n", sep = "")
 
-  # Récupérer les IDBanks
+  # Retrieve IDBanks
   idbank_list <- tryCatch(
     {
       insee::get_idbank_list(dataset_id)
     },
     error = function(e) {
-      cat(glue::glue(" Erreur : {e$message}\n"))
+      cat(glue::glue(" Error: {e$message}\n"))
       return(NULL)
     }
   )
@@ -50,35 +50,35 @@ explore_dataset <- function(dataset_id, show_sample = TRUE) {
     return(invisible(NULL))
   }
 
-  cat(glue::glue(" Nombre total d'IDBanks : {nrow(idbank_list)}\n\n"))
+  cat(glue::glue(" Total number of IDBanks: {nrow(idbank_list)}\n\n"))
 
-  # Afficher les colonnes disponibles
-  cat(" Colonnes disponibles :\n")
+  # Display available columns
+  cat(" Available columns:\n")
   print(names(idbank_list))
   cat("\n")
 
-  # Afficher les dimensions et leurs valeurs
+  # Display dimensions and their values
   dimensions <- names(idbank_list)[
     !names(idbank_list) %in%
       c("idbank", "IDBANK", "TITLE_FR", "TITLE_EN", "UNIT", "UNIT_MULT")
   ]
 
-  cat(" Dimensions et valeurs :\n")
+  cat(" Dimensions and values:\n")
   for (dim in dimensions) {
     unique_vals <- unique(idbank_list[[dim]])
-    cat(glue::glue("   - {dim} ({length(unique_vals)} valeurs) : "))
+    cat(glue::glue("   - {dim} ({length(unique_vals)} values): "))
     if (length(unique_vals) <= 15) {
       cat(paste(unique_vals, collapse = ", "), "\n")
     } else {
-      cat(paste(head(unique_vals, 15), collapse = ", "), "...\n")
+      cat(paste(utils::head(unique_vals, 15), collapse = ", "), "...\n")
     }
   }
   cat("\n")
 
-  # Afficher un échantillon si demandé
+  # Display sample if requested
   if (show_sample) {
-    cat(" Échantillon de données (10 premières lignes) :\n")
-    print(head(idbank_list, 10))
+    cat(" Data sample (first 10 rows):\n")
+    print(utils::head(idbank_list, 10))
   }
 
   invisible(idbank_list)
@@ -115,24 +115,24 @@ explore_dataset <- function(dataset_id, show_sample = TRUE) {
 #' @export
 #' @importFrom tibble tribble
 popular_keywords <- function() {
-  cat("\n MOTS-CLÉS POPULAIRES POUR LA RECHERCHE INSEE\n")
+  cat("\n POPULAR KEYWORDS FOR INSEE SEARCH\n")
   cat(rep("=", 60), "\n\n", sep = "")
 
   keywords <- tibble::tribble(
-    ~Catégorie         , ~`Mots-clés français`              , ~`Mots-clés anglais`             ,
-    "Emploi & Chômage" , "chomage, emploi, travail"           , "unemployment, employment, labor" ,
-    "Prix & Inflation"  , "ipc, inflation, prix"               , "cpi, inflation, prices"          ,
-    "Économie"         , "pib, croissance, production"        , "gdp, growth, production"         ,
-    "Commerce"          , "export, import, commerce"           , "export, import, trade"           ,
-    "Démographie"      , "population, naissance, deces"       , "population, birth, death"        ,
-    "Logement"          , "logement, construction, immobilier" , "housing, construction, property" ,
-    "Revenus"           , "salaire, revenu, pauvrete"          , "wage, income, poverty"           ,
-    "Entreprises"       , "entreprise, societe, creation"      , "company, firm, creation"
+    ~Category             , ~`French keywords`                   , ~`English keywords`               ,
+    "Employment"          , "chomage, emploi, travail"           , "unemployment, employment, labor" ,
+    "Prices & Inflation"  , "ipc, inflation, prix"               , "cpi, inflation, prices"          ,
+    "Economy"             , "pib, croissance, production"        , "gdp, growth, production"         ,
+    "Trade"               , "export, import, commerce"           , "export, import, trade"           ,
+    "Demographics"        , "population, naissance, deces"       , "population, birth, death"        ,
+    "Housing"             , "logement, construction, immobilier" , "housing, construction, property" ,
+    "Income"              , "salaire, revenu, pauvrete"          , "wage, income, poverty"           ,
+    "Business"            , "entreprise, societe, creation"      , "company, firm, creation"
   )
 
   print(keywords, n = Inf)
 
-  cat("\n Usage : search_insee('chomage') ou search_insee('CPI')\n\n")
+  cat("\n Usage: search_insee('chomage') or search_insee('CPI')\n\n")
 
   invisible(keywords)
 }

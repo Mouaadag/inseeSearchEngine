@@ -34,9 +34,9 @@
 #'
 #' Results are saved in the output directory with timestamped filenames:
 #' \itemize{
-#'   \item {keyword}_{timestamp}.rds - Complete results
-#'   \item {keyword}_{timestamp}_summary.csv - Summary table
-#'   \item {keyword}_{dataset_id}_{timestamp}.csv - IDBanks per dataset
+#'   \item \code{keyword_timestamp.rds} - Complete results
+#'   \item \code{keyword_timestamp_summary.csv} - Summary table
+#'   \item \code{keyword_dataset_id_timestamp.csv} - IDBanks per dataset
 #' }
 #'
 #' @examples
@@ -66,39 +66,39 @@ search_insee <- function(
   output_dir = "resultats_recherche"
 ) {
   cat("\n")
-  cat("╔════════════════════════════════════════════════════════════╗\n")
-  cat("║       MOTEUR DE RECHERCHE INSEE - DATASETS & IDBANKS      ║\n")
-  cat("╚════════════════════════════════════════════════════════════╝\n")
-  cat(glue::glue("\nRecherche pour : '{keyword}'\n"))
+  cat("+============================================================+\n")
+  cat("|       INSEE SEARCH ENGINE - DATASETS & IDBANKS            |\n")
+  cat("+============================================================+\n")
+  cat(glue::glue("\nSearching for: '{keyword}'\n"))
   cat(rep("=", 60), "\n\n", sep = "")
 
-  # Créer le dossier de sortie si besoin
+  # Create output directory if needed
   if (save_results && !dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
 
-  # ÉTAPE 1 : RECHERCHER LES DATASETS
-  cat(" ÉTAPE 1 : Recherche des datasets...\n")
+  # STEP 1: SEARCH DATASETS
+  cat(" STEP 1: Searching datasets...\n")
 
   dataset_list <- tryCatch(
     {
       insee::get_dataset_list()
     },
     error = function(e) {
-      cat(" Erreur lors de la récupération des datasets :", e$message, "\n")
+      cat(" Error retrieving datasets:", e$message, "\n")
       return(NULL)
     }
   )
 
   if (is.null(dataset_list)) {
-    cat("  Impossible de récupérer la liste des datasets\n")
+    cat("  Unable to retrieve dataset list\n")
     return(invisible(NULL))
   }
 
-  # Identifier les colonnes de recherche
+  # Identify search columns
   search_cols <- names(dataset_list)[sapply(dataset_list, is.character)]
 
-  # Recherche par mot-clé
+  # Search by keyword
   matches <- rep(FALSE, nrow(dataset_list))
   for (col in search_cols) {
     matches <- matches | grepl(keyword, dataset_list[[col]], ignore.case = TRUE)
@@ -107,28 +107,28 @@ search_insee <- function(
   datasets_matched <- dataset_list[matches, ]
 
   if (nrow(datasets_matched) == 0) {
-    cat(glue::glue("  Aucun dataset trouvé pour '{keyword}'\n"))
-    cat("\n Suggestions :\n")
+    cat(glue::glue("  No datasets found for '{keyword}'\n"))
+    cat("\n Suggestions:\n")
     cat(
-      "   - Essayez des termes plus généraux (ex: 'emploi' au lieu de 'chômage')\n"
+      "   - Try more general terms (e.g., 'employment' instead of 'unemployment')\n"
     )
-    cat("   - Essayez en anglais (ex: 'unemployment', 'CPI', 'GDP')\n")
-    cat("   - Vérifiez l'orthographe\n\n")
+    cat("   - Try in English (e.g., 'unemployment', 'CPI', 'GDP')\n")
+    cat("   - Check spelling\n\n")
     return(invisible(NULL))
   }
 
-  # Limiter le nombre de datasets
+  # Limit number of datasets
   if (nrow(datasets_matched) > max_datasets) {
     cat(glue::glue(
-      "   -  {nrow(datasets_matched)} datasets trouvés, affichage des {max_datasets} premiers\n"
+      "   -  {nrow(datasets_matched)} datasets found, showing first {max_datasets}\n"
     ))
-    datasets_matched <- head(datasets_matched, max_datasets)
+    datasets_matched <- utils::head(datasets_matched, max_datasets)
   } else {
-    cat(glue::glue("   -  {nrow(datasets_matched)} datasets trouvés\n\n"))
+    cat(glue::glue("   -  {nrow(datasets_matched)} datasets found\n\n"))
   }
 
-  # Afficher les datasets trouvés
-  cat(" DATASETS CORRESPONDANTS :\n")
+  # Display matched datasets
+  cat(" MATCHING DATASETS:\n")
   cat(rep("-", 60), "\n", sep = "")
 
   for (i in seq_len(nrow(datasets_matched))) {
@@ -145,8 +145,8 @@ search_insee <- function(
   }
   cat("\n")
 
-  # ÉTAPE 2 : EXTRAIRE LES IDBANKS
-  cat(" ÉTAPE 2 : Extraction des IDBanks...\n\n")
+  # STEP 2: EXTRACT IDBANKS
+  cat(" STEP 2: Extracting IDBanks...\n\n")
 
   all_results <- list()
 
@@ -159,7 +159,7 @@ search_insee <- function(
     }
 
     cat(glue::glue(
-      "   [{i}/{nrow(datasets_matched)}] Traitement : {dataset_id}...\n"
+      "   [{i}/{nrow(datasets_matched)}] Processing: {dataset_id}...\n"
     ))
 
     idbank_list <- tryCatch(
@@ -167,13 +167,13 @@ search_insee <- function(
         insee::get_idbank_list(dataset_id)
       },
       error = function(e) {
-        cat(glue::glue("        Erreur : {e$message}\n"))
+        cat(glue::glue("        Error: {e$message}\n"))
         return(NULL)
       }
     )
 
     if (is.null(idbank_list) || nrow(idbank_list) == 0) {
-      cat("      Aucun IDBANK disponible\n\n")
+      cat("      No IDBanks available\n\n")
       next
     }
 
@@ -182,27 +182,27 @@ search_insee <- function(
         c("idbank", "IDBANK", "TITLE_FR", "TITLE_EN", "UNIT", "UNIT_MULT")
     ]
 
-    cat(glue::glue("      {nrow(idbank_list)} IDBanks trouvés\n"))
+    cat(glue::glue("      {nrow(idbank_list)} IDBanks found\n"))
     cat(glue::glue(
-      "      Dimensions : {paste(dimensions, collapse = ', ')}\n"
+      "      Dimensions: {paste(dimensions, collapse = ', ')}\n"
     ))
 
-    for (dim in head(dimensions, 3)) {
+    for (dim in utils::head(dimensions, 3)) {
       unique_vals <- unique(idbank_list[[dim]])
       if (length(unique_vals) <= 10) {
         cat(glue::glue(
-          "         {dim}: {paste(head(unique_vals, 10), collapse = ', ')}\n"
+          "         {dim}: {paste(utils::head(unique_vals, 10), collapse = ', ')}\n"
         ))
       } else {
         cat(glue::glue(
-          "         {dim}: {length(unique_vals)} valeurs uniques\n"
+          "         {dim}: {length(unique_vals)} unique values\n"
         ))
       }
     }
     cat("\n")
 
     if (nrow(idbank_list) > max_idbanks_per_dataset) {
-      idbank_list <- head(idbank_list, max_idbanks_per_dataset)
+      idbank_list <- utils::head(idbank_list, max_idbanks_per_dataset)
     }
 
     all_results[[dataset_id]] <- list(
@@ -214,9 +214,9 @@ search_insee <- function(
     )
   }
 
-  # ÉTAPE 3 : SAUVEGARDER LES RÉSULTATS
+  # STEP 3: SAVE RESULTS
   if (save_results && length(all_results) > 0) {
-    cat(" ÉTAPE 3 : Sauvegarde des résultats...\n")
+    cat(" STEP 3: Saving results...\n")
 
     timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
     filename_base <- gsub("[^[:alnum:]]", "_", keyword)
@@ -226,7 +226,7 @@ search_insee <- function(
       glue::glue("{filename_base}_{timestamp}.rds")
     )
     saveRDS(all_results, rds_file)
-    cat(glue::glue("   Résultats complets : {rds_file}\n"))
+    cat(glue::glue("   Complete results: {rds_file}\n"))
 
     summary_df <- purrr::map_df(all_results, function(x) {
       tibble::tibble(
@@ -242,7 +242,7 @@ search_insee <- function(
       glue::glue("{filename_base}_{timestamp}_summary.csv")
     )
     readr::write_csv(summary_df, csv_file)
-    cat(glue::glue("    Résumé CSV : {csv_file}\n"))
+    cat(glue::glue("    CSV summary: {csv_file}\n"))
 
     for (dataset_id in names(all_results)) {
       idbanks_file <- file.path(
@@ -256,25 +256,25 @@ search_insee <- function(
     cat("\n")
   }
 
-  # RÉSUMÉ FINAL
+  # FINAL SUMMARY
   cat("\n")
-  cat("╔════════════════════════════════════════════════════════════╗\n")
-  cat("║                      RÉSUMÉ FINAL                          ║\n")
-  cat("╚════════════════════════════════════════════════════════════╝\n\n")
+  cat("+============================================================+\n")
+  cat("|                      FINAL SUMMARY                         |\n")
+  cat("+============================================================+\n\n")
 
-  cat(glue::glue(" Recherche : '{keyword}'\n"))
-  cat(glue::glue(" Datasets trouvés : {nrow(datasets_matched)}\n"))
+  cat(glue::glue(" Search: '{keyword}'\n"))
+  cat(glue::glue(" Datasets found: {nrow(datasets_matched)}\n"))
   cat(glue::glue(
-    " Total IDBanks : {sum(purrr::map_int(all_results, ~.x$n_idbanks))}\n\n"
+    " Total IDBanks: {sum(purrr::map_int(all_results, ~.x$n_idbanks))}\n\n"
   ))
 
-  cat(" Pour utiliser ces IDBanks dans vos projets :\n")
-  cat("   1. Chargez le fichier RDS : results <- readRDS('fichier.rds')\n")
-  cat("   2. Accédez aux IDBanks : results$DATASET_ID$idbanks\n")
-  cat("   3. Téléchargez les données : get_insee_idbank(idbanks)\n\n")
+  cat(" To use these IDBanks in your projects:\n")
+  cat("   1. Load RDS file: results <- readRDS('file.rds')\n")
+  cat("   2. Access IDBanks: results$DATASET_ID$idbanks\n")
+  cat("   3. Download data: get_insee_idbank(idbanks)\n\n")
 
   if (save_results && length(all_results) > 0) {
-    cat(" Exemple d'utilisation :\n")
+    cat(" Usage example:\n")
     first_dataset <- names(all_results)[1]
     cat(glue::glue("   results <- readRDS('{rds_file}')\n"))
     cat(glue::glue("   idbanks <- results${first_dataset}$idbanks$idbank\n"))

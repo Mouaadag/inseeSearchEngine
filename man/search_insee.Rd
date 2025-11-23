@@ -52,9 +52,9 @@ The function performs the following steps:
 
 Results are saved in the output directory with timestamped filenames:
 \itemize{
-  \item {keyword}_{timestamp}.rds - Complete results
-  \item {keyword}_{timestamp}_summary.csv - Summary table
-  \item {keyword}_{dataset_id}_{timestamp}.csv - IDBanks per dataset
+  \item \code{keyword_timestamp.rds} - Complete results
+  \item \code{keyword_timestamp_summary.csv} - Summary table
+  \item \code{keyword_dataset_id_timestamp.csv} - IDBanks per dataset
 }
 }
 \examples{
