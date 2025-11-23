@@ -16,7 +16,7 @@ An R package for searching and exploring French National Institute of Statistics
 - **Auto-Save Results**: Automatically save search results as RDS and CSV
 - **User-Friendly**: Beautiful console output with emojis and formatting
 - **Fast**: Efficiently search through hundreds of datasets
--  **Bilingual**: Works with both French and English search terms
+- **Bilingual**: Works with both French and English search terms
 
 ## Installation
 
@@ -241,7 +241,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions, suggestions, or issues, please:
 
-- Open an [issue](https://github.com/yourusername/inseeSearchEngine/issues)
+- Open an [issue](https://github.com/Mouaadag/inseeSearchEngine/issues)
 - Contact: mouaad.agourram@outlook.fr
 
 ## Links
