@@ -29,7 +29,7 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 URL: https://github.com/Mouaadag/inseeSearchEngine
 BugReports: https://github.com/Mouaadag/inseeSearchEngine/issues
