@@ -1,0 +1,35 @@
+Package: inseeSearchEngine
+Type: Package
+Title: Search and Explore INSEE Datasets
+Version: 1.0.0
+Authors@R: c(
+    person("Mouaad", "", email = "mouaad.agourram@outlook.fr", role = c("aut", "cre"))
+    )
+Description: A powerful search engine for exploring French National Institute of
+    Statistics (INSEE) datasets. Search datasets by keywords, explore available
+    dimensions, filter IDBanks, and download data for analysis. Provides an
+    intuitive interface for discovering and accessing INSEE's comprehensive
+    economic and demographic data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 4.0.0)
+Imports:
+    insee (>= 1.1.0),
+    dplyr (>= 1.0.0),
+    tidyr (>= 1.0.0),
+    purrr (>= 0.3.0),
+    tibble (>= 3.0.0),
+    glue (>= 1.4.0),
+    readr (>= 2.0.0)
+Suggests:
+    ggplot2 (>= 3.3.0),
+    lubridate (>= 1.7.0),
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+RoxygenNote: 7.2.0
+VignetteBuilder: knitr
+URL: https://github.com/Mouaadag/inseeSearchEngine
+BugReports: https://github.com/Mouaadag/inseeSearchEngine/issues
